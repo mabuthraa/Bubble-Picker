@@ -18,6 +18,7 @@ import java.nio.FloatBuffer
 import java.util.*
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
+import kotlin.collections.ArrayList
 
 /**
  * Created by irinagalata on 1/19/17.
@@ -28,10 +29,12 @@ class PickerRenderer(val glView: View) : GLSurfaceView.Renderer {
     var maxSelectedCount: Int? = null
         set(value) {
             Engine.maxSelectedCount = value
+            field = value
         }
-    var bubbleSize = 50
+    var bubbleSize = 10
         set(value) {
             Engine.radius = value
+            field = value
         }
     var listener: BubblePickerListener? = null
     lateinit var items: ArrayList<PickerItem>
@@ -76,10 +79,12 @@ class PickerRenderer(val glView: View) : GLSurfaceView.Renderer {
     private fun initialize() {
         clear()
         Engine.centerImmediately = centerImmediately
-        Engine.build(items.size, scaleX, scaleY).forEachIndexed { index, body ->
+        Engine.build(items, scaleX, scaleY).forEachIndexed { index, body ->
             circles.add(Item(items[index], body))
         }
-        items.forEach { if (it.isSelected) Engine.resize(circles.first { circle -> circle.pickerItem == it }) }
+        items.forEach {
+            if (it.isSelected) Engine.resize(circles.first { circle -> circle.pickerItem == it })
+        }
         if (textureIds == null) textureIds = IntArray(circles.size * 2)
         initializeArrays()
     }
@@ -157,9 +162,25 @@ class PickerRenderer(val glView: View) : GLSurfaceView.Renderer {
     }
 
     fun resize(x: Float, y: Float) = getItem(Vec2(x, glView.height - y))?.apply {
-        if (Engine.resize(this)) {
+        callResize(this)
+
+        val cleanedItems = circles.filter { it != this }
+        // if toggle
+        cleanedItems.forEach {
+            if (it.circleBody.increased) {
+                callResize(it)
+            }
+        }
+    }
+
+    private fun Item.callResize(item: Item) {
+        if (Engine.resize(item)) {
             listener?.let {
-                if (circleBody.increased) it.onBubbleDeselected(pickerItem) else it.onBubbleSelected(pickerItem)
+                if (circleBody.increased) {
+                    it.onBubbleDeselected(pickerItem)
+                } else {
+                    it.onBubbleSelected(pickerItem)
+                }
             }
         }
     }

@@ -49,20 +49,23 @@ class DemoActivity : AppCompatActivity() {
 
             override fun getItem(position: Int): PickerItem {
                 return PickerItem().apply {
-                    title = titles[position]
+                    textSize = 600F
+                    title = (position % 3).toString()
+                    subtitle = "text text text "
                     gradient = BubbleGradient(colors.getColor((position * 2) % 8, 0),
                             colors.getColor((position * 2) % 8 + 1, 0), BubbleGradient.VERTICAL)
                     typeface = mediumTypeface
                     textColor = ContextCompat.getColor(this@DemoActivity, android.R.color.white)
                     backgroundImage = ContextCompat.getDrawable(this@DemoActivity, images.getResourceId(position, 0))
+                    customData = position % 3
                 }
             }
         }
 
         colors.recycle()
         images.recycle()
-
-        picker.bubbleSize = 20
+        picker.centerImmediately = true
+        picker.bubbleSize = 5
         picker.listener = object : BubblePickerListener {
             override fun onBubbleSelected(item: PickerItem) = toast("${item.title} selected")
 
