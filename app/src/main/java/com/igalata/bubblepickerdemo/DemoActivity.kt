@@ -65,7 +65,7 @@ class DemoActivity : AppCompatActivity() {
         colors.recycle()
         images.recycle()
         picker.centerImmediately = true
-        picker.bubbleSize = 5
+        picker.bubbleSize = 10
         picker.listener = object : BubblePickerListener {
             override fun onBubbleSelected(item: PickerItem) = toast("${item.title} selected")
 

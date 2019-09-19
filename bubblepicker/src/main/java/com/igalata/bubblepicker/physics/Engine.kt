@@ -18,9 +18,9 @@ object Engine {
     var radius = 10
         set(value) {
             field = value
-            bubbleRadius = interpolate(0.1f, 0.25f, value / 200f)
-            gravity = interpolate(20f, 80f, value / 1200f)
-            standardIncreasedGravity = interpolate(500f, 800f, value / 200f)
+            bubbleRadius = interpolate(0.1f, 0.25f, value / 100f)
+            gravity = interpolate(20f, 80f, value / 100f)
+            standardIncreasedGravity = interpolate(500f, 800f, value / 100f)
         }
     var centerImmediately = false
     private var standardIncreasedGravity = interpolate(500f, 800f, 0.5f)

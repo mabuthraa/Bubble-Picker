@@ -49,7 +49,7 @@ class BubblePicker : GLSurfaceView {
         }
     var bubbleSize = 10
         set(value) {
-            if (value in 1..100) {
+            if (value in 1..200) {
                 renderer.bubbleSize = value
             }
             field = value
