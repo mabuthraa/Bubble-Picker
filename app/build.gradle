@@ -9,8 +9,8 @@ android {
         applicationId "com.igalata.bubblepickerdemo"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 4
-        versionName "0.1.1"
+        versionCode 6
+        versionName "0.1.6"
     }
     buildTypes {
         release {
@@ -26,6 +26,7 @@ android {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile "com.android.support:appcompat-v7:$supportLibVersion"
+    compile "com.android.support:design:$supportLibVersion"
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     compile project(':bubblepicker')
 }
