@@ -52,7 +52,7 @@ object Engine {
             val factor = (data[i].customData as Int * 0.2F)  + 1F
 //            val factor = 1
 
-            bodies.add(CircleBody(world, Vec2(x, y), bubbleRadius * factor * scaleX* 0.5F, (bubbleRadius * factor * scaleX) * 1.3f, density))
+            bodies.add(CircleBody(world, Vec2(x, y), bubbleRadius * factor * scaleX* 0.5F, (bubbleRadius  * scaleX) * 1.3f, density))
         }
         this.scaleX = scaleX
         this.scaleY = scaleY
