@@ -74,10 +74,11 @@ data class Item(val pickerItem: PickerItem, val circleBody: CircleBody) {
 
         val canvas = Canvas(bitmap)
 
-        if (isSelected) drawImage(canvas)
+        if (isSelected)
+            drawImage(canvas)
         drawBackground(canvas, isSelected)
         drawIcon(canvas)
-        drawText(canvas)
+        drawText(canvas, pickerItem.title, pickerItem.subtitle, isSelected)
 
         return bitmap
     }
@@ -91,8 +92,8 @@ data class Item(val pickerItem: PickerItem, val circleBody: CircleBody) {
         canvas.drawRect(0f, 0f, bitmapSize, bitmapSize, bgPaint)
     }
 
-    private fun drawText(canvas: Canvas) {
-        if (pickerItem.title == null || pickerItem.textColor == null) return
+    private fun drawText(canvas: Canvas, text: String?, subtitle: String?, selected: Boolean) {
+        if (text == null || pickerItem.textColor == null) return
 
         val paint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
             color = pickerItem.textColor!!
@@ -102,12 +103,18 @@ data class Item(val pickerItem: PickerItem, val circleBody: CircleBody) {
 
         val maxTextHeight = if (pickerItem.icon == null) bitmapSize / 2f else bitmapSize / 2.7f
 
-        var textLayout = placeText(paint)
+        var textLayout = placeText(paint, text, subtitle, selected)
 
         while (textLayout.height > maxTextHeight) {
             paint.textSize--
-            textLayout = placeText(paint)
+            textLayout = placeText(paint, text, subtitle, selected)
         }
+
+
+        while ((bitmapSize * 0.85F) < paint.measureText(subtitle) && paint.textSize != 0F && selected) { // Reduce size if text's width is not less than 80% of placeholder width
+            paint.textSize--
+        }
+        textLayout = placeText(paint, text, subtitle, selected)
 
         if (pickerItem.icon == null) {
             canvas.translate((bitmapSize - textLayout.width) / 2f, (bitmapSize - textLayout.height) / 2f)
@@ -120,8 +127,13 @@ data class Item(val pickerItem: PickerItem, val circleBody: CircleBody) {
         textLayout.draw(canvas)
     }
 
-    private fun placeText(paint: TextPaint): StaticLayout {
-        return StaticLayout(pickerItem.title, paint, (bitmapSize * 0.9).toInt(),
+    private fun placeText(paint: TextPaint, text: String, subtitle: String?, selected: Boolean): StaticLayout {
+        val finalText = if (selected && !subtitle.isNullOrEmpty()) {
+            "$text\n$subtitle"
+        } else {
+            text
+        }
+        return StaticLayout(finalText, paint, (bitmapSize * 0.9).toInt(),
                 Layout.Alignment.ALIGN_CENTER, 1.0f, 0.0f, false)
     }
 
@@ -153,6 +165,7 @@ data class Item(val pickerItem: PickerItem, val circleBody: CircleBody) {
             val bitmapHeight = if (height < width) bitmapSize else bitmapSize * ratio
             val bitmapWidth = if (height < width) bitmapSize * ratio else bitmapSize
             it.bounds = Rect(0, 0, bitmapWidth.toInt(), bitmapHeight.toInt())
+
             it.draw(canvas)
         }
     }
