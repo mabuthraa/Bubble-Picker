@@ -37,7 +37,7 @@ class PickerRenderer(val glView: View) : GLSurfaceView.Renderer {
             field = value
         }
     var listener: BubblePickerListener? = null
-    lateinit var items: ArrayList<PickerItem>
+     var items: ArrayList<PickerItem> = ArrayList()
     val selectedItems: List<PickerItem?>
         get() = Engine.selectedBodies.map { circles.firstOrNull { circle -> circle.circleBody == it }?.pickerItem }
     var centerImmediately = false
