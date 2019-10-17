@@ -1,5 +1,6 @@
 package com.igalata.bubblepicker.physics
 
+import com.igalata.bubblepicker.model.PickerItem
 import com.igalata.bubblepicker.rendering.Item
 import com.igalata.bubblepicker.sqr
 import org.jbox2d.common.Vec2
@@ -14,7 +15,7 @@ object Engine {
     val selectedBodies: List<CircleBody>
         get() = bodies.filter { it.increased || it.toBeIncreased || it.isIncreasing }
     var maxSelectedCount: Int? = null
-    var radius = 50
+    var radius = 10
         set(value) {
             field = value
             bubbleRadius = interpolate(0.1f, 0.25f, value / 100f)
@@ -43,17 +44,19 @@ object Engine {
         get() = if (centerImmediately) 0.5f else 2.2f
     private var stepsCount = 0
 
-    fun build(bodiesCount: Int, scaleX: Float, scaleY: Float): List<CircleBody> {
+    fun build(data: ArrayList<PickerItem>, scaleX: Float, scaleY: Float): List<CircleBody> {
         val density = interpolate(0.8f, 0.2f, radius / 100f)
-        for (i in 0..bodiesCount - 1) {
+        for (i in 0 until data.size) {
             val x = if (Random().nextBoolean()) -startX else startX
             val y = if (Random().nextBoolean()) -0.5f / scaleY else 0.5f / scaleY
-            bodies.add(CircleBody(world, Vec2(x, y), bubbleRadius * scaleX, (bubbleRadius * scaleX) * 1.3f, density))
+            val factor = (data[i].customData as Int * 0.2F)  + 1F
+//            val factor = 1
+
+            bodies.add(CircleBody(world, Vec2(x, y), bubbleRadius * factor * scaleX* 0.5F, (bubbleRadius  * scaleX) * 1.3f, density))
         }
         this.scaleX = scaleX
         this.scaleY = scaleY
         createBorders()
-
         return bodies
     }
 
@@ -107,7 +110,7 @@ object Engine {
         )
     }
 
-    private fun move(body: CircleBody) {
+    fun move(body: CircleBody) {
         body.physicalBody.apply {
             body.isVisible = centerImmediately.not()
             val direction = gravityCenter.sub(position)

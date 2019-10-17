@@ -40,16 +40,19 @@ class BubblePicker : GLSurfaceView {
     var maxSelectedCount: Int? = null
         set(value) {
             renderer.maxSelectedCount = value
+            field = value
         }
     var listener: BubblePickerListener? = null
         set(value) {
             renderer.listener = value
+            field = value
         }
-    var bubbleSize = 50
+    var bubbleSize = 10
         set(value) {
-            if (value in 1..100) {
+            if (value in 1..200) {
                 renderer.bubbleSize = value
             }
+            field = value
         }
     val selectedItems: List<PickerItem?>
         get() = renderer.selectedItems
@@ -60,7 +63,7 @@ class BubblePicker : GLSurfaceView {
             renderer.centerImmediately = value
         }
 
-    private val renderer = PickerRenderer(this)
+    val renderer = PickerRenderer(this)
     private var startX = 0f
     private var startY = 0f
     private var previousX = 0f
@@ -68,7 +71,7 @@ class BubblePicker : GLSurfaceView {
 
     constructor(context: Context?) : this(context, null)
     constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs) {
-        setZOrderOnTop(true)
+        setZOrderOnTop(false)
         setEGLContextClientVersion(2)
         setEGLConfigChooser(8, 8, 8, 8, 16, 0)
         holder.setFormat(PixelFormat.RGBA_8888)
@@ -76,6 +79,9 @@ class BubblePicker : GLSurfaceView {
         renderMode = RENDERMODE_CONTINUOUSLY
         attrs?.let { retrieveAttrubutes(attrs) }
     }
+
+
+
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
         when (event.action) {
