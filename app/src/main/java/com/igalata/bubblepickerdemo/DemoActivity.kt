@@ -5,6 +5,7 @@ import android.os.Build
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
+import android.view.View
 import android.widget.Toast
 import com.igalata.bubblepicker.BubblePickerListener
 import com.igalata.bubblepicker.adapter.BubblePickerAdapter
@@ -30,7 +31,12 @@ class DemoActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_demo)
+        selectPhase()
 
+//        standardPhase()
+    }
+
+    private fun selectPhase() {
         titleTextView.typeface = mediumTypeface
         subtitleTextView.typeface = boldTypeface
         hintTextView.typeface = regularTypeface
@@ -41,7 +47,54 @@ class DemoActivity : AppCompatActivity() {
 
         val titles = resources.getStringArray(R.array.countries)
         val colors = resources.obtainTypedArray(R.array.colors)
-        val images = resources.obtainTypedArray(R.array.images)
+        //        val images = resources.obtainTypedArray(R.array.images)
+
+        picker.adapter = object : BubblePickerAdapter {
+
+            override val totalCount = titles.size
+
+            override fun getItem(position: Int): PickerItem {
+                return PickerItem().apply {
+                    textSize = 40F
+                    title = "textText " + position
+                    subtitle = "text text text "
+                    gradient = BubbleGradient(colors.getColor((position * 2) % 8, 0),
+                            colors.getColor((position * 2) % 8 + 1, 0), BubbleGradient.VERTICAL)
+                    typeface = mediumTypeface
+                    textColor = ContextCompat.getColor(this@DemoActivity, android.R.color.white)
+                    //                    backgroundImage = ContextCompat.getDrawable(this@DemoActivity, images.getResourceId(position, 0))
+                    customData = position % 3
+                }
+            }
+        }
+
+        colors.recycle()
+        //        images.recycle()
+        picker.centerImmediately = true
+        picker.bubbleSize = 10
+        picker.listener = object : BubblePickerListener {
+            override fun onBubbleSelected(item: PickerItem) {
+//                picker.renderer.items.remove(item)
+                remove(item)
+            }
+
+            override fun onBubbleDeselected(item: PickerItem) = toast("${item.title} deselected")
+        }
+    }
+
+
+    private fun standardPhase() {
+        titleTextView.typeface = mediumTypeface
+        subtitleTextView.typeface = boldTypeface
+        hintTextView.typeface = regularTypeface
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            subtitleTextView.letterSpacing = 0.06f
+            hintTextView.letterSpacing = 0.05f
+        }
+
+        val titles = resources.getStringArray(R.array.countries)
+        val colors = resources.obtainTypedArray(R.array.colors)
+        //        val images = resources.obtainTypedArray(R.array.images)
 
         picker.adapter = object : BubblePickerAdapter {
 
@@ -56,14 +109,14 @@ class DemoActivity : AppCompatActivity() {
                             colors.getColor((position * 2) % 8 + 1, 0), BubbleGradient.VERTICAL)
                     typeface = mediumTypeface
                     textColor = ContextCompat.getColor(this@DemoActivity, android.R.color.white)
-                    backgroundImage = ContextCompat.getDrawable(this@DemoActivity, images.getResourceId(position, 0))
+                    //                    backgroundImage = ContextCompat.getDrawable(this@DemoActivity, images.getResourceId(position, 0))
                     customData = position % 3
                 }
             }
         }
 
         colors.recycle()
-        images.recycle()
+        //        images.recycle()
         picker.centerImmediately = true
         picker.bubbleSize = 10
         picker.listener = object : BubblePickerListener {
@@ -85,4 +138,24 @@ class DemoActivity : AppCompatActivity() {
 
     private fun toast(text: String) = Toast.makeText(this, text, Toast.LENGTH_SHORT).show()
 
+    private fun remove(view: PickerItem) {
+        selectedList.add(view)
+        picker.renderer.items.remove(view)
+        refresh()
+    }
+
+    private fun refresh() {
+        picker.onPause()
+        picker.onResume()
+    }
+
+    val selectedList: ArrayList<PickerItem> = ArrayList()
+
+    fun onAdd(view: View) {
+        if (selectedList.isNotEmpty()) {
+            val item: PickerItem = selectedList.removeAt(0)
+            picker.renderer.items.add(item)
+            refresh()
+        }
+    }
 }
