@@ -76,7 +76,7 @@ data class Item(val pickerItem: PickerItem, val circleBody: CircleBody) {
 
         if (isSelected)
             drawImage(canvas)
-        drawBackground(canvas, isSelected)
+        drawBackground(canvas, false)
         drawIcon(canvas)
         drawText(canvas, pickerItem.title, pickerItem.subtitle, isSelected)
 
