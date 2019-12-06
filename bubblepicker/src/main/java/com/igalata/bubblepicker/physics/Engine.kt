@@ -1,5 +1,6 @@
 package com.igalata.bubblepicker.physics
 
+import android.util.Log
 import com.igalata.bubblepicker.model.PickerItem
 import com.igalata.bubblepicker.rendering.Item
 import com.igalata.bubblepicker.sqr
@@ -44,20 +45,29 @@ object Engine {
         get() = if (centerImmediately) 0.5f else 2.2f
     private var stepsCount = 0
 
-    fun build(data: ArrayList<PickerItem>, scaleX: Float, scaleY: Float): List<CircleBody> {
+    fun build(data: ArrayList<PickerItem>, scaleX: Float, scaleY: Float, height: Float): List<CircleBody> {
         val density = interpolate(0.8f, 0.2f, radius / 100f)
+        val maxPotentialSize = .2F
+        val factorRelativeSize = maxPotentialSize / data.maxBy { it.customData as Int }?.customData as Int
         for (i in 0 until data.size) {
             val x = if (Random().nextBoolean()) -startX else startX
             val y = if (Random().nextBoolean()) -0.5f / scaleY else 0.5f / scaleY
-            val factor = (data[i].customData as Int * 0.2F)  + 1F
+            this.scaleX = scaleX
+            this.scaleY = scaleY
+            val radiusX = getRelativeSize(data[i].customData as Int, factorRelativeSize)
+            Log.d("CCC", "factor:$radiusX, data[i].customData:${data[i].customData}, factorRelativeSize:$factorRelativeSize , maxPotentialSize:$maxPotentialSize, height:$height")
 //            val factor = 1
 
-            bodies.add(CircleBody(world, Vec2(x, y), bubbleRadius * factor * scaleX* 0.5F, (bubbleRadius  * scaleX) * 1.3f, density))
+            bodies.add(CircleBody(world, Vec2(x, y), radiusX, radiusX * 1.1f, density))
         }
-        this.scaleX = scaleX
-        this.scaleY = scaleY
+
         createBorders()
         return bodies
+    }
+
+    private fun getRelativeSize(value: Int, factor: Float): Float {
+
+        return ((value * factor) + .05F)/ scaleY
     }
 
     fun move() {

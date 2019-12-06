@@ -15,7 +15,6 @@ import com.igalata.bubblepicker.rendering.BubbleShader.fragmentShader
 import com.igalata.bubblepicker.rendering.BubbleShader.vertexShader
 import org.jbox2d.common.Vec2
 import java.nio.FloatBuffer
-import java.util.*
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 import kotlin.collections.ArrayList
@@ -37,7 +36,7 @@ class PickerRenderer(val glView: View) : GLSurfaceView.Renderer {
             field = value
         }
     var listener: BubblePickerListener? = null
-     var items: ArrayList<PickerItem> = ArrayList()
+    var items: ArrayList<PickerItem> = ArrayList()
     val selectedItems: List<PickerItem?>
         get() = Engine.selectedBodies.map { circles.firstOrNull { circle -> circle.circleBody == it }?.pickerItem }
     var centerImmediately = false
@@ -79,7 +78,7 @@ class PickerRenderer(val glView: View) : GLSurfaceView.Renderer {
     private fun initialize() {
         clear()
         Engine.centerImmediately = centerImmediately
-        Engine.build(items, scaleX, scaleY).forEachIndexed { index, body ->
+        Engine.build(items, scaleX, scaleY, glView.height.toFloat()).forEachIndexed { index, body ->
             circles.add(Item(items[index], body))
         }
         items.forEach {
