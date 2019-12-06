@@ -55,10 +55,8 @@ object Engine {
             this.scaleX = scaleX
             this.scaleY = scaleY
             val radiusX = getRelativeSize(data[i].customData as Int, factorRelativeSize)
-            Log.d("CCC", "factor:$radiusX, data[i].customData:${data[i].customData}, factorRelativeSize:$factorRelativeSize , maxPotentialSize:$maxPotentialSize, height:$height")
-//            val factor = 1
 
-            bodies.add(CircleBody(world, Vec2(x, y), radiusX, radiusX * 1.1f, density))
+            bodies.add(CircleBody(world, Vec2(x, y), radiusX, radiusX * 1.3f, density))
         }
 
         createBorders()
