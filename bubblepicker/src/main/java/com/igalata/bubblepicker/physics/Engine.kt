@@ -48,7 +48,8 @@ object Engine {
     fun build(data: ArrayList<PickerItem>, scaleX: Float, scaleY: Float, height: Float): List<CircleBody> {
         val density = interpolate(0.8f, 0.2f, radius / 100f)
         val maxPotentialSize = .2F
-        val factorRelativeSize = maxPotentialSize / data.maxBy { it.customData as Int }?.customData as Int
+
+        val factorRelativeSize = maxPotentialSize / ((data.maxBy { it.customData as Int }?.customData as Int?) ?: 1)
         for (i in 0 until data.size) {
             val x = if (Random().nextBoolean()) -startX else startX
             val y = if (Random().nextBoolean()) -0.5f / scaleY else 0.5f / scaleY
